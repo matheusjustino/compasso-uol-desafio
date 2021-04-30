@@ -37,39 +37,28 @@
 
 ## Sobre o projeto
 
-Backend criado para integrar as plataformas
-[Bling](https://www.bling.com.br/home) e
-[Pipedrive](https://www.pipedrive.com/pt) através de uma API REST. Buscando os
-Negócios Ganhos (Won Deals) do [Pipedrive](https://www.pipedrive.com/pt) para
-salvar como Pedidos (Orders) no [Bling](https://www.bling.com.br/home). Além
-disso, os dados diários dos pedidos salvos no
-[Bling](https://www.bling.com.br/home) são salvos no MongoDB Atlas.
+Backend criado para integrar as plataformas criação e gerenciamento de cidades e
+clientes.
 
 ## Instruções
 
 ```bash
 # Repositório
-git clone https://github.com/matheusjustino/link-api.git
+git clone https://github.com/matheusjustino/compasso-uol-desafio.git
 
 # Dependências
-yarn add
+yarn
 
 # Iniciar no modo Desenvolvimento
 yarn start:dev
 
-# Projeto Executando
-Ao iniciar o projeto três Schedules estarão em execução.
-	- Um para para salvar os Deals como Orders no Bling.
-	- Um para salvar as Orders no MongoDB Atlas.
-	- Um para para buscar os dados salvos no MongoDB Atlas (Reports).
-
 # Docker
-	- Build: docker image build -t nestjs-link-api-[dev ou prod]
+	- Build: docker image build -t compasso-uol-desafio-[dev ou prod] .
 	- Executar: docker-compose rm para remover o cache de images docker-compose já criadas,
-		então use o comando: docker-compose up dev (Acesse as rotas na porta 3000 normalmente).
+		então use o comando: docker-compose up dev (Acesse as rotas na porta 8080 normalmente).
 
 # Documentação
-Com o projeto em execução acesse http://localhost:3000/api para conhecer as rotas que o projeto possui.
+Com o projeto em execução acesse http://localhost:8080/api para conhecer as rotas que o projeto possui.
 ```
 
 ## Tecnologias Utilizadas
