@@ -11,7 +11,7 @@ import {
 export class HttpExceptionFilter implements ExceptionFilter {
 	private readonly logger = new Logger(HttpExceptionFilter.name);
 
-	public catch(exception: unknown, host: ArgumentsHost) {
+	public catch(exception: any, host: ArgumentsHost) {
 		const context = host.switchToHttp();
 		const response = context.getResponse();
 		const request = context.getRequest();
@@ -24,6 +24,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
 		const message =
 			exception instanceof HttpException
 				? exception.getResponse()
+				: exception.message
+				? exception.message
 				: exception;
 
 		this.logger.error(
