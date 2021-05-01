@@ -13,7 +13,16 @@ services:
             context: .
             target: production
             dockerfile: ./Dockerfile
-        command: ['node', 'dist/main.js']
+        command:
+            [
+                './wait-for-it.sh',
+                'mongo:27017',
+                '-t',
+                '10',
+                '--',
+                'node',
+                'dist/main.js',
+            ]
         ports:
             - 8080:8080
         depends_on:
