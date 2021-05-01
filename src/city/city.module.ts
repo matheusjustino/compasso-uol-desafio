@@ -9,5 +9,6 @@ import { DatabaseModule } from '../database/database.module';
 	imports: [DatabaseModule],
 	providers: [CityService],
 	controllers: [CityController],
+	exports: [CityService],
 })
 export class CityModule {}
