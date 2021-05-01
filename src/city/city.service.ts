@@ -11,6 +11,7 @@ import { CityRepository } from '../database/repositories/city.repository';
 // DTO's
 import { CityDto } from './dto/city-create.dto';
 import { CityQueryDto } from './dto/city-query.dto';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class CityService {
@@ -23,7 +24,7 @@ export class CityService {
 		);
 	}
 
-	public findById(id: string): Observable<CityDocument> {
+	public findById(id: string | Types.ObjectId): Observable<CityDocument> {
 		return from(this.cityRepository.cityModel.findById(id)).pipe(
 			map((city) => city),
 			catchError((error) => throwError(error)),

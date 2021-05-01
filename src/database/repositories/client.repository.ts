@@ -9,10 +9,10 @@ import { Client, ClientDocument } from '../schemas/client.schema';
 export class ClientRepository {
 	constructor(
 		@InjectModel(Client.name)
-		private readonly ClientRepository: Model<ClientDocument>,
+		private readonly ClientModel: Model<ClientDocument>,
 	) {}
 
-	public get clientRepository(): Model<ClientDocument> {
-		return this.ClientRepository;
+	public get clientModel(): Model<ClientDocument> {
+		return this.ClientModel;
 	}
 }

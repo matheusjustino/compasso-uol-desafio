@@ -1,11 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 // SCHEMAS
-import { City, CitySchema } from './city.schema';
+import { City } from './city.schema';
 
 // ENUM's
-import { Sex } from '../../common/sex.enum';
+import { Sex } from '../../common/enums/sex.enum';
 
 @Schema({ timestamps: true })
 export class Client {
@@ -19,9 +19,9 @@ export class Client {
 	public age: number;
 
 	@Prop({ required: true })
-	public birthDate: Date;
+	public birthDate: string;
 
-	@Prop({ type: CitySchema })
+	@Prop({ type: Types.ObjectId, ref: City.name })
 	public city: City;
 }
 
