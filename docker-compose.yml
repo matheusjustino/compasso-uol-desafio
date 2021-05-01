@@ -1,23 +1,11 @@
 version: '3.8'
 
 services:
-    dev:
-        container_name: compasso-uol-desafio-dev
-        image: compasso-uol-desafio-dev
-        build:
-            context: .
-            target: development
-            dockerfile: ./Dockerfile
-        command: yarn start:debug
+    mongo:
+        image: mongo
+        restart: always
         ports:
-            - 3000:3000
-            - 9229:9229
-        networks:
-            - nesjs-network
-        volumes:
-            - .:/usr/src/app
-            - /usr/src/app/node_modules
-        restart: unless-stopped
+            - 27018:27017
     prod:
         container_name: compasso-uol-desafio-prod
         image: compasso-uol-desafio-prod
@@ -25,16 +13,11 @@ services:
             context: .
             target: production
             dockerfile: ./Dockerfile
-        command: yarn start:prod
+        command: ['node', 'dist/main.js']
         ports:
-            - 3000:3000
-            - 9229:9229
-        networks:
-            - nesjs-network
-        volumes:
-            - .:/usr/src/app
-            - /usr/src/app/node_modules
+            - 8080:8080
+        depends_on:
+            - mongo
+        environment:
+            NODE_ENV: docker
         restart: unless-stopped
-
-networks:
-    nesjs-network:

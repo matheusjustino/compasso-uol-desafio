@@ -1,6 +1,9 @@
 import { join } from 'path';
 
-const config = process.env.NODE_ENV ? 'production.env' : 'develop.env';
+const environments = ['develop', 'production', 'docker'];
+const config = environments.includes(process.env.NODE_ENV)
+	? `${process.env.NODE_ENV}.env`
+	: 'develop.env';
 
 const configPath = join(process.cwd(), '/src/environments', config);
 

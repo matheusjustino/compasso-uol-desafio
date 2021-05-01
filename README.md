@@ -53,9 +53,9 @@ yarn
 yarn start:dev
 
 # Docker
-	- Build: docker image build -t compasso-uol-desafio-[dev ou prod] .
-	- Executar: docker-compose rm para remover o cache de images docker-compose já criadas,
-		então use o comando: docker-compose up dev (Acesse as rotas na porta 8080 normalmente).
+	- Build: docker image build -t compasso-uol-desafio-prod
+	- Executar: docker-compose up prod (Acesse as rotas na porta 8080 normalmente)
+	- Remover Imagem: docker-compose rm para remover o cache de images docker-compose já criadas
 
 # Documentação
 Com o projeto em execução acesse http://localhost:8080/api para conhecer as rotas que o projeto possui.
