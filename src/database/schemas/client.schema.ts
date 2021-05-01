@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
 // SCHEMAS
-import { City } from './city.schema';
+import { City, CityDocument } from './city.schema';
 
 // ENUM's
 import { Sex } from '../../common/enums/sex.enum';
@@ -22,7 +22,7 @@ export class Client {
 	public birthDate: string;
 
 	@Prop({ type: Types.ObjectId, ref: City.name })
-	public city: City;
+	public city: CityDocument;
 }
 
 export type ClientDocument = Client & Document;
