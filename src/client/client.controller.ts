@@ -11,7 +11,14 @@ import {
 	Next,
 	Logger,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+	ApiBody,
+	ApiOkResponse,
+	ApiOperation,
+	ApiParam,
+	ApiQuery,
+	ApiTags,
+} from '@nestjs/swagger';
 
 // SERVICES
 import { ClientService } from './client.service';
@@ -29,7 +36,11 @@ export class ClientController {
 	constructor(private readonly clientService: ClientService) {}
 
 	@Post()
+	@ApiBody({ type: ClientCreateDto })
 	@ApiOkResponse({ type: ClientCreateDto })
+	@ApiOperation({
+		description: 'Cria uma [Cliente] com o DTO recebido.',
+	})
 	public create(
 		@Body() clientCreateDto: ClientCreateDto,
 		@Res() res,
@@ -51,6 +62,15 @@ export class ClientController {
 	}
 
 	@Put(':id')
+	@ApiBody({ type: ClientUpdateDto })
+	@ApiOkResponse({ type: ClientCreateDto })
+	@ApiParam({
+		name: 'id',
+		description: 'Passar o _id do cliente.',
+	})
+	@ApiOperation({
+		description: 'Atualiza uma [Cliente] com o DTO recebido.',
+	})
 	public update(
 		@Param('id') id: string,
 		@Body() clientUpdateDto: ClientUpdateDto,
@@ -77,6 +97,11 @@ export class ClientController {
 	}
 
 	@Get()
+	@ApiQuery({ type: ClientQueryDto })
+	@ApiOkResponse({ type: [ClientCreateDto] })
+	@ApiOperation({
+		description: 'Busca um [Cliente] de acordo com a query enviada.',
+	})
 	public findBy(@Query() query: ClientQueryDto, @Res() res, @Next() next) {
 		this.logger.log(`FindBy - payload: ${JSON.stringify(ClientQueryDto)}`);
 
@@ -94,6 +119,14 @@ export class ClientController {
 	}
 
 	@Get(':id')
+	@ApiParam({
+		name: 'id',
+		description: 'Passar o _id do cliente.',
+	})
+	@ApiOkResponse({ type: ClientCreateDto })
+	@ApiOperation({
+		description: 'Busca um [Cliente] de acordo com o _id enviado.',
+	})
 	public findById(@Param('id') id: string, @Res() res, @Next() next) {
 		this.logger.log(`FindById - payload: ${JSON.stringify(id)}`);
 
@@ -111,6 +144,14 @@ export class ClientController {
 	}
 
 	@Delete(':id')
+	@ApiParam({
+		name: 'id',
+		description: 'Passar o _id do cliente.',
+	})
+	@ApiOkResponse({ type: ClientCreateDto })
+	@ApiOperation({
+		description: 'Remove um [Cliente] de acordo com o _id enviado.',
+	})
 	public remove(@Param('id') id: string, @Res() res, @Next() next) {
 		this.logger.log(`Remove - payload: ${JSON.stringify(id)}`);
 

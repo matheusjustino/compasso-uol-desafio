@@ -9,6 +9,14 @@ import {
 	Logger,
 	Next,
 } from '@nestjs/common';
+import {
+	ApiBody,
+	ApiOkResponse,
+	ApiOperation,
+	ApiParam,
+	ApiQuery,
+	ApiTags,
+} from '@nestjs/swagger';
 
 // SERVICES
 import { CityService } from './city.service';
@@ -17,6 +25,7 @@ import { CityService } from './city.service';
 import { CityDto } from './dto/city-create.dto';
 import { CityQueryDto } from './dto/city-query.dto';
 
+@ApiTags('Cidades')
 @Controller('cities')
 export class CityController {
 	private logger = new Logger(CityController.name);
@@ -24,6 +33,11 @@ export class CityController {
 	constructor(private readonly cityService: CityService) {}
 
 	@Post()
+	@ApiBody({ type: CityDto })
+	@ApiOkResponse({ type: CityDto })
+	@ApiOperation({
+		description: 'Cria uma [Cidade] com o DTO recebido.',
+	})
 	public create(@Body() cityDto: CityDto, @Res() res, @Next() next) {
 		this.logger.log(`Create - payload: ${JSON.stringify(cityDto)}`);
 
@@ -41,6 +55,14 @@ export class CityController {
 	}
 
 	@Get(':id')
+	@ApiParam({
+		name: 'id',
+		description: 'Passar o _id da cidade.',
+	})
+	@ApiOkResponse({ type: CityDto })
+	@ApiOperation({
+		description: 'Busca uma [Cidade] de acordo com o _id enviado.',
+	})
 	public findById(@Param('id') id: string, @Res() res, @Next() next) {
 		this.logger.log(`FindById - payload: ${JSON.stringify(id)}`);
 
@@ -58,6 +80,11 @@ export class CityController {
 	}
 
 	@Get()
+	@ApiQuery({ type: CityDto })
+	@ApiOkResponse({ type: [CityDto] })
+	@ApiOperation({
+		description: 'Busca uma [Cidade] de acordo com a query enviada.',
+	})
 	public findBy(
 		@Query() cityQueryDto: CityQueryDto,
 		@Res() res,
