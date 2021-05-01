@@ -17,6 +17,10 @@ import { modelsProviderAsync } from '../database/models-provider';
 // SERVICES
 import { CityService } from './city.service';
 
+// DTO's
+import { CityDto } from './dto/city-create.dto';
+import { CityQueryDto } from './dto/city-query.dto';
+
 describe('City Service', () => {
 	let cityService: CityService;
 
@@ -37,7 +41,7 @@ describe('City Service', () => {
 	});
 
 	it('CREATE - should be created a City', async () => {
-		const cityDto = {
+		const cityDto: CityDto = {
 			name: 'Campina Grande',
 			state: 'PB',
 		};
@@ -49,7 +53,7 @@ describe('City Service', () => {
 	});
 
 	it('CREATE - shouldnt be created a City', async () => {
-		const cityDto = {
+		const cityDto: CityDto = {
 			name: 'Campina Grande',
 			state: null,
 		};
@@ -60,7 +64,7 @@ describe('City Service', () => {
 	});
 
 	it('GET - should be returned a City by Id', async () => {
-		const cityDto = {
+		const cityDto: CityDto = {
 			name: 'Campina Grande',
 			state: 'PB',
 		};
@@ -74,21 +78,21 @@ describe('City Service', () => {
 	});
 
 	it('GET - should be returned a City array by query', async () => {
-		const cityDto = {
+		const cityDto: CityDto = {
 			name: 'Campina Grande',
 			state: 'PB',
 		};
 
 		const city = await cityService.create(cityDto).toPromise();
 
-		const emptyQuery = {};
-		const queryWithFirstParameter = {
+		const emptyQuery: CityQueryDto = {};
+		const queryWithFirstParameter: CityQueryDto = {
 			name: 'Campina Grande',
 		};
-		const queryWithSecondParameter = {
+		const queryWithSecondParameter: CityQueryDto = {
 			state: 'PB',
 		};
-		const queryWithAllParameters = {
+		const queryWithAllParameters: CityQueryDto = {
 			name: 'Campina Grande',
 			state: 'PB',
 		};

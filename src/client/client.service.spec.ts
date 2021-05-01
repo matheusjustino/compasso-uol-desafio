@@ -1,6 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongooseModule } from '@nestjs/mongoose';
 
+// MODULES
+
+import { DatabaseModule } from '../database/database.module';
 // MONGOOSE TEST
 import {
 	rootMongooseTestModule,
@@ -26,6 +29,9 @@ import { CityService } from '../city/city.service';
 
 // DTO's
 import { ClientQueryDto } from './dtos/client-query.dto';
+import { ClientUpdateDto } from './dtos/client-update.dto';
+import { ClientCreateDto } from './dtos/client-create.dto';
+import { CityDto } from '../city/dto/city-create.dto';
 
 describe('ClientService', () => {
 	let clientService: ClientService;
@@ -36,6 +42,7 @@ describe('ClientService', () => {
 		const module: TestingModule = await Test.createTestingModule({
 			imports: [
 				rootMongooseTestModule(),
+				DatabaseModule,
 				MongooseModule.forFeatureAsync(modelsProviderAsync),
 			],
 			providers: [
@@ -51,7 +58,7 @@ describe('ClientService', () => {
 	});
 
 	beforeEach(async () => {
-		const cityDto = {
+		const cityDto: CityDto = {
 			name: 'Campina Grande',
 			state: 'PB',
 		};
@@ -69,7 +76,7 @@ describe('ClientService', () => {
 	});
 
 	it('CREATE - should be created a Client', async () => {
-		const clientDto = {
+		const clientDto: ClientCreateDto = {
 			name: 'Matheus Henrique',
 			sex: Sex.masculine,
 			age: 26,
@@ -85,7 +92,7 @@ describe('ClientService', () => {
 	});
 
 	it('CREATE - shouldnt be created a Client', async () => {
-		const clientDto = {
+		const clientDto: ClientCreateDto = {
 			name: 'Matheus Henrique',
 			sex: Sex.masculine,
 			age: 26,
@@ -99,7 +106,7 @@ describe('ClientService', () => {
 	});
 
 	it('UPDATE - should to update a Client', async () => {
-		const clientDto = {
+		const clientDto: ClientCreateDto = {
 			name: 'Matheus Henrique',
 			sex: Sex.masculine,
 			age: 26,
@@ -107,7 +114,7 @@ describe('ClientService', () => {
 			city: cityMock._id,
 		};
 
-		const clientUpdateDto = {
+		const clientUpdateDto: ClientUpdateDto = {
 			name: 'Matheus Henrique Fernandes Justino',
 		};
 
@@ -121,7 +128,7 @@ describe('ClientService', () => {
 	});
 
 	it('GET - should be returned a Client by id', async () => {
-		const clientDto = {
+		const clientDto: ClientCreateDto = {
 			name: 'Matheus Henrique',
 			sex: Sex.masculine,
 			age: 26,
@@ -136,7 +143,7 @@ describe('ClientService', () => {
 	});
 
 	it('GET - should be return a Client array by query', async () => {
-		const clientDto = {
+		const clientDto: ClientCreateDto = {
 			name: 'Matheus Henrique',
 			sex: Sex.masculine,
 			age: 26,
