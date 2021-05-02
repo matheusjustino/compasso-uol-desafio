@@ -51,7 +51,15 @@ export class ClientService {
 					new: true,
 				},
 			),
-		).pipe(catchError((error) => throwError(error)));
+		).pipe(
+			map((updatedClient) => {
+				if (!updatedClient) {
+					throw new BadRequestException('Client does not exist');
+				}
+				return updatedClient;
+			}),
+			catchError((error) => throwError(error)),
+		);
 	}
 
 	public findById(id: string): Observable<ClientDocument> {

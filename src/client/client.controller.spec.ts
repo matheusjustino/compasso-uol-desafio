@@ -1,24 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongooseModule } from '@nestjs/mongoose';
-
-// MODULES
+import mongoose, { Types } from 'mongoose';
 
 import { DatabaseModule } from '../database/database.module';
+import { ClientController } from './client.controller';
+
 // MONGOOSE TEST
 import {
 	rootMongooseTestModule,
 	closeInMongodConnection,
 } from '../common/root-mongoose-test/root-mongoose-test.module';
 
-// ENUM's
-import { Sex } from '../common/enums/sex.enum';
-
-// SCHEMAS
-import { CityDocument } from '../database/schemas/city.schema';
-
 // REPOSITORIES
-import { CityRepository } from '../database/repositories/city.repository';
-import { ClientRepository } from '../database/repositories/client.repository';
+import { CityDocument } from '../database/schemas/city.schema';
 
 // MODELS PROVIDER
 import { modelsProviderAsync } from '../database/models-provider';
@@ -32,9 +26,10 @@ import { ClientQueryDto } from './dtos/client-query.dto';
 import { ClientUpdateDto } from './dtos/client-update.dto';
 import { ClientCreateDto } from './dtos/client-create.dto';
 import { CityDto } from '../city/dto/city-create.dto';
+import { Sex } from '../common/enums/sex.enum';
 
-describe('ClientService', () => {
-	let clientService: ClientService;
+describe('Client Controller', () => {
+	let clientController: ClientController;
 	let cityService: CityService;
 	let cityMock: CityDocument;
 
@@ -45,15 +40,11 @@ describe('ClientService', () => {
 				DatabaseModule,
 				MongooseModule.forFeatureAsync(modelsProviderAsync),
 			],
-			providers: [
-				CityRepository,
-				ClientRepository,
-				CityService,
-				ClientService,
-			],
+			controllers: [ClientController],
+			providers: [ClientService, CityService],
 		}).compile();
 
-		clientService = module.get<ClientService>(ClientService);
+		clientController = module.get<ClientController>(ClientController);
 		cityService = module.get<CityService>(CityService);
 	});
 
@@ -71,7 +62,7 @@ describe('ClientService', () => {
 	});
 
 	it('should be defined', () => {
-		expect(clientService).toBeDefined();
+		expect(clientController).toBeDefined();
 		expect(cityService).toBeDefined();
 	});
 
@@ -84,7 +75,7 @@ describe('ClientService', () => {
 			city: cityMock._id,
 		};
 
-		const client = await clientService.create(clientDto).toPromise();
+		const client = await clientController.create(clientDto).toPromise();
 
 		expect(client.city).toBe(cityMock._id);
 		expect(client.name).toBe(clientDto.name);
@@ -101,7 +92,7 @@ describe('ClientService', () => {
 		};
 
 		await expect(
-			clientService.create(clientDto).toPromise(),
+			clientController.create(clientDto).toPromise(),
 		).rejects.toThrow('City does not exist');
 	});
 
@@ -118,13 +109,38 @@ describe('ClientService', () => {
 			name: 'Matheus Henrique Fernandes Justino',
 		};
 
-		const client = await clientService.create(clientDto).toPromise();
+		const client = await clientController.create(clientDto).toPromise();
 		expect(client.name).toBe(clientDto.name);
 
-		const updatedClient = await clientService
+		const updatedClient = await clientController
 			.update(client._id, clientUpdateDto)
 			.toPromise();
 		expect(updatedClient.name).toBe(clientUpdateDto.name);
+	});
+
+	it('UPDATE - shouldnt to update a Client', async () => {
+		const clientDto: ClientCreateDto = {
+			name: 'Matheus Henrique',
+			sex: Sex.masculine,
+			age: 26,
+			birthDate: '23/03/1995',
+			city: cityMock._id,
+		};
+
+		const clientUpdateDto: ClientUpdateDto = {
+			name: 'Matheus Henrique Fernandes Justino',
+		};
+
+		const client = await clientController.create(clientDto).toPromise();
+		expect(client.name).toBe(clientDto.name);
+
+		const newClientId = new Types.ObjectId();
+
+		await expect(
+			clientController
+				.update(newClientId.toString(), clientUpdateDto)
+				.toPromise(),
+		).rejects.toThrow('Client does not exist');
 	});
 
 	it('GET - should be returned a Client by id', async () => {
@@ -135,11 +151,30 @@ describe('ClientService', () => {
 			birthDate: '23/03/1995',
 			city: cityMock._id,
 		};
-		const client = await clientService.create(clientDto).toPromise();
+		const client = await clientController.create(clientDto).toPromise();
 
-		const findClient = await clientService.findById(client._id).toPromise();
+		const findClient = await clientController
+			.findById(client._id)
+			.toPromise();
 
 		expect(client._id).toStrictEqual(findClient._id);
+	});
+
+	it('GET - shouldnd be returned a Client by id', async () => {
+		const clientDto: ClientCreateDto = {
+			name: 'Matheus Henrique',
+			sex: Sex.masculine,
+			age: 26,
+			birthDate: '23/03/1995',
+			city: cityMock._id,
+		};
+		await clientController.create(clientDto).toPromise();
+
+		const newClientId = new Types.ObjectId();
+
+		await expect(
+			clientController.findById(newClientId._id.toString()).toPromise(),
+		).rejects.toThrow('Client does not exist');
 	});
 
 	it('GET - should be return a Client array by query', async () => {
@@ -150,7 +185,7 @@ describe('ClientService', () => {
 			birthDate: '23/03/1995',
 			city: cityMock._id,
 		};
-		const client = await clientService.create(clientDto).toPromise();
+		const client = await clientController.create(clientDto).toPromise();
 
 		const query: ClientQueryDto = {
 			name: 'Matheus Henrique',
@@ -162,15 +197,15 @@ describe('ClientService', () => {
 			name: 'Ana Carolina',
 		};
 
-		const findClientWithQuery = await clientService
+		const findClientWithQuery = await clientController
 			.findBy(query)
 			.toPromise();
 
-		const findClientWithEmptyQuery = await clientService
+		const findClientWithEmptyQuery = await clientController
 			.findBy(emptyQuery)
 			.toPromise();
 
-		const findClientWithWrongValueQuery = await clientService
+		const findClientWithWrongValueQuery = await clientController
 			.findBy(wrongValueQuery)
 			.toPromise();
 
@@ -179,5 +214,39 @@ describe('ClientService', () => {
 		expect(findClientWithWrongValueQuery.length > 0).toBe(false);
 		expect(findClientWithWrongValueQuery).toStrictEqual([]);
 		expect(findClientWithQuery[0]._id).toStrictEqual(client._id);
+	});
+
+	it('REMOVE - should be removed a Client', async () => {
+		const clientDto: ClientCreateDto = {
+			name: 'Matheus Henrique',
+			sex: Sex.masculine,
+			age: 26,
+			birthDate: '23/03/1995',
+			city: cityMock._id,
+		};
+		const client = await clientController.create(clientDto).toPromise();
+
+		await clientController.remove(client._id).toPromise();
+
+		await expect(
+			clientController.findById(client._id).toPromise(),
+		).rejects.toThrow('Client does not exist');
+	});
+
+	it('REMOVE - shouldnd be removed a Client', async () => {
+		const clientDto: ClientCreateDto = {
+			name: 'Matheus Henrique',
+			sex: Sex.masculine,
+			age: 26,
+			birthDate: '23/03/1995',
+			city: cityMock._id,
+		};
+		await clientController.create(clientDto).toPromise();
+
+		const newClientId = new Types.ObjectId();
+
+		await expect(
+			clientController.remove(newClientId._id.toString()).toPromise(),
+		).rejects.toThrow('Client does not exist');
 	});
 });

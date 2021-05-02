@@ -7,8 +7,6 @@ import {
 	Delete,
 	Param,
 	Query,
-	Res,
-	Next,
 	Logger,
 } from '@nestjs/common';
 import {
@@ -19,6 +17,8 @@ import {
 	ApiQuery,
 	ApiTags,
 } from '@nestjs/swagger';
+import { catchError, tap } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 // SERVICES
 import { ClientService } from './client.service';
@@ -27,6 +27,9 @@ import { ClientService } from './client.service';
 import { ClientCreateDto } from './dtos/client-create.dto';
 import { ClientUpdateDto } from './dtos/client-update.dto';
 import { ClientQueryDto } from './dtos/client-query.dto';
+
+// PIPES
+import { MongoPipeTransform } from '../common/pipes/mongo-pipe-transform.pipe';
 
 @ApiTags('Clientes')
 @Controller('clients')
@@ -41,23 +44,17 @@ export class ClientController {
 	@ApiOperation({
 		description: 'Cria uma [Cliente] com o DTO recebido.',
 	})
-	public create(
-		@Body() clientCreateDto: ClientCreateDto,
-		@Res() res,
-		@Next() next,
-	) {
+	public create(@Body() clientCreateDto: ClientCreateDto) {
 		this.logger.log(`Create - payload: ${JSON.stringify(clientCreateDto)}`);
 
-		this.clientService.create(clientCreateDto).subscribe(
-			(data) => {
-				this.logger.log(`Create Result: ${JSON.stringify(data)}`);
-				return res.json(data);
-			},
-			(error) => {
-				this.logger.error('create error: ', error);
-				res.status(500);
-				next(new Error(error));
-			},
+		return this.clientService.create(clientCreateDto).pipe(
+			tap((data) =>
+				this.logger.log(`Create Result: ${JSON.stringify(data)}`),
+			),
+			catchError((error) => {
+				this.logger.error('Create error: ', error);
+				return throwError(error);
+			}),
 		);
 	}
 
@@ -74,8 +71,6 @@ export class ClientController {
 	public update(
 		@Param('id') id: string,
 		@Body() clientUpdateDto: ClientUpdateDto,
-		@Res() res,
-		@Next() next,
 	) {
 		this.logger.log(
 			`Update - payload: ${JSON.stringify(id)} ${JSON.stringify(
@@ -83,16 +78,14 @@ export class ClientController {
 			)}`,
 		);
 
-		this.clientService.update(id, clientUpdateDto).subscribe(
-			(data) => {
-				this.logger.log(`Update Result: ${JSON.stringify(data)}`);
-				return res.json(data);
-			},
-			(error) => {
+		return this.clientService.update(id, clientUpdateDto).pipe(
+			tap((data) =>
+				this.logger.log(`Update Result: ${JSON.stringify(data)}`),
+			),
+			catchError((error) => {
 				this.logger.error('Update error: ', error);
-				res.status(500);
-				next(new Error(error));
-			},
+				return throwError(error);
+			}),
 		);
 	}
 
@@ -102,19 +95,17 @@ export class ClientController {
 	@ApiOperation({
 		description: 'Busca um [Cliente] de acordo com a query enviada.',
 	})
-	public findBy(@Query() query: ClientQueryDto, @Res() res, @Next() next) {
-		this.logger.log(`FindBy - payload: ${JSON.stringify(ClientQueryDto)}`);
+	public findBy(@Query(MongoPipeTransform) query: ClientQueryDto) {
+		this.logger.log(`FindBy - payload: ${JSON.stringify(query)}`);
 
-		this.clientService.findBy(query).subscribe(
-			(data) => {
-				this.logger.log(`FindBy Result: ${JSON.stringify(data)}`);
-				return res.json(data);
-			},
-			(error) => {
+		return this.clientService.findBy(query).pipe(
+			tap((data) =>
+				this.logger.log(`FindBy Result: ${JSON.stringify(data)}`),
+			),
+			catchError((error) => {
 				this.logger.error('FindBy error: ', error);
-				res.status(500);
-				next(new Error(error));
-			},
+				return throwError(error);
+			}),
 		);
 	}
 
@@ -127,19 +118,17 @@ export class ClientController {
 	@ApiOperation({
 		description: 'Busca um [Cliente] de acordo com o _id enviado.',
 	})
-	public findById(@Param('id') id: string, @Res() res, @Next() next) {
+	public findById(@Param('id') id: string) {
 		this.logger.log(`FindById - payload: ${JSON.stringify(id)}`);
 
-		this.clientService.findById(id).subscribe(
-			(data) => {
-				this.logger.log(`FindById Result: ${JSON.stringify(data)}`);
-				return res.json(data);
-			},
-			(error) => {
+		return this.clientService.findById(id).pipe(
+			tap((data) =>
+				this.logger.log(`FindById Result: ${JSON.stringify(data)}`),
+			),
+			catchError((error) => {
 				this.logger.error('FindById error: ', error);
-				res.status(500);
-				next(new Error(error));
-			},
+				return throwError(error);
+			}),
 		);
 	}
 
@@ -152,23 +141,19 @@ export class ClientController {
 	@ApiOperation({
 		description: 'Remove um [Cliente] de acordo com o _id enviado.',
 	})
-	public remove(@Param('id') id: string, @Res() res, @Next() next) {
+	public remove(@Param('id') id: string) {
 		this.logger.log(`Remove - payload: ${JSON.stringify(id)}`);
 
-		this.clientService.remove(id).subscribe(
-			(data) => {
+		return this.clientService.remove(id).pipe(
+			tap((data) =>
 				this.logger.log(
-					`Remove Result - payload: ${JSON.stringify(id)}`,
-				);
-				return res.json(data);
-			},
-			(error) => {
-				this.logger.log(
-					`Remove error - payload: ${JSON.stringify(id)}`,
-				);
-				res.status(500);
-				next(new Error(error));
-			},
+					`Remove Result - payload: ${JSON.stringify(data)}`,
+				),
+			),
+			catchError((error) => {
+				this.logger.error('FindById error: ', error);
+				return throwError(error);
+			}),
 		);
 	}
 }

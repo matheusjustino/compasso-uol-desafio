@@ -2,6 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MongooseModule } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 
+import { CityController } from './city.controller';
+
 // MONGOOSE TEST
 import {
 	rootMongooseTestModule,
@@ -21,8 +23,8 @@ import { CityService } from './city.service';
 import { CityDto } from './dto/city-create.dto';
 import { CityQueryDto } from './dto/city-query.dto';
 
-describe('City Service', () => {
-	let cityService: CityService;
+describe('City Controller', () => {
+	let cityController: CityController;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -30,10 +32,11 @@ describe('City Service', () => {
 				rootMongooseTestModule(),
 				MongooseModule.forFeatureAsync(modelsProviderAsync),
 			],
+			controllers: [CityController],
 			providers: [CityRepository, CityService],
 		}).compile();
 
-		cityService = module.get<CityService>(CityService);
+		cityController = module.get<CityController>(CityController);
 	});
 
 	afterAll(async () => {
@@ -46,7 +49,7 @@ describe('City Service', () => {
 			state: 'PB',
 		};
 
-		const city = await cityService.create(cityDto).toPromise();
+		const city = await cityController.create(cityDto).toPromise();
 
 		expect(city.name).toBe(cityDto.name);
 		expect(city.state).toBe(cityDto.state);
@@ -58,9 +61,9 @@ describe('City Service', () => {
 			state: null,
 		};
 
-		await expect(cityService.create(cityDto).toPromise()).rejects.toThrow(
-			mongoose.Error.ValidationError,
-		);
+		await expect(
+			cityController.create(cityDto).toPromise(),
+		).rejects.toThrow(mongoose.Error.ValidationError);
 	});
 
 	it('GET - should be returned a City by Id', async () => {
@@ -69,8 +72,8 @@ describe('City Service', () => {
 			state: 'PB',
 		};
 
-		const city = await cityService.create(cityDto).toPromise();
-		const findCity = await cityService.findById(city._id).toPromise();
+		const city = await cityController.create(cityDto).toPromise();
+		const findCity = await cityController.findById(city._id).toPromise();
 
 		expect(findCity._id).toStrictEqual(city._id);
 		expect(findCity.name).toBe(city.name);
@@ -83,7 +86,7 @@ describe('City Service', () => {
 			state: 'PB',
 		};
 
-		const city = await cityService.create(cityDto).toPromise();
+		const city = await cityController.create(cityDto).toPromise();
 
 		const emptyQuery: CityQueryDto = {};
 		const queryWithFirstParameter: CityQueryDto = {
@@ -97,16 +100,16 @@ describe('City Service', () => {
 			state: 'PB',
 		};
 
-		const cityWithEmptyQuery = await cityService
+		const cityWithEmptyQuery = await cityController
 			.findBy(emptyQuery)
 			.toPromise();
-		const cityWithFirstParameter = await cityService
+		const cityWithFirstParameter = await cityController
 			.findBy(queryWithFirstParameter)
 			.toPromise();
-		const cityWithSecondParameter = await cityService
+		const cityWithSecondParameter = await cityController
 			.findBy(queryWithSecondParameter)
 			.toPromise();
-		const cityWithAllParameters = await cityService
+		const cityWithAllParameters = await cityController
 			.findBy(queryWithAllParameters)
 			.toPromise();
 
