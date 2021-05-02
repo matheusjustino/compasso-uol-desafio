@@ -20,7 +20,7 @@ import { modelsProviderAsync } from '../database/models-provider';
 import { CityService } from './city.service';
 
 // DTO's
-import { CityDto } from './dto/city-create.dto';
+import { CityCreateDto } from './dto/city-create.dto';
 import { CityQueryDto } from './dto/city-query.dto';
 
 describe('City Controller', () => {
@@ -44,35 +44,35 @@ describe('City Controller', () => {
 	});
 
 	it('CREATE - should be created a City', async () => {
-		const cityDto: CityDto = {
+		const CityCreateDto: CityCreateDto = {
 			name: 'Campina Grande',
 			state: 'PB',
 		};
 
-		const city = await cityController.create(cityDto).toPromise();
+		const city = await cityController.create(CityCreateDto).toPromise();
 
-		expect(city.name).toBe(cityDto.name);
-		expect(city.state).toBe(cityDto.state);
+		expect(city.name).toBe(CityCreateDto.name);
+		expect(city.state).toBe(CityCreateDto.state);
 	});
 
 	it('CREATE - shouldnt be created a City', async () => {
-		const cityDto: CityDto = {
+		const CityCreateDto: CityCreateDto = {
 			name: 'Campina Grande',
 			state: null,
 		};
 
 		await expect(
-			cityController.create(cityDto).toPromise(),
+			cityController.create(CityCreateDto).toPromise(),
 		).rejects.toThrow(mongoose.Error.ValidationError);
 	});
 
 	it('GET - should be returned a City by Id', async () => {
-		const cityDto: CityDto = {
+		const CityCreateDto: CityCreateDto = {
 			name: 'Campina Grande',
 			state: 'PB',
 		};
 
-		const city = await cityController.create(cityDto).toPromise();
+		const city = await cityController.create(CityCreateDto).toPromise();
 		const findCity = await cityController.findById(city._id).toPromise();
 
 		expect(findCity._id).toStrictEqual(city._id);
@@ -81,12 +81,12 @@ describe('City Controller', () => {
 	});
 
 	it('GET - should be returned a City array by query', async () => {
-		const cityDto: CityDto = {
+		const CityCreateDto: CityCreateDto = {
 			name: 'Campina Grande',
 			state: 'PB',
 		};
 
-		const city = await cityController.create(cityDto).toPromise();
+		const city = await cityController.create(CityCreateDto).toPromise();
 
 		const emptyQuery: CityQueryDto = {};
 		const queryWithFirstParameter: CityQueryDto = {

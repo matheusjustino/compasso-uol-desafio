@@ -22,7 +22,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { CityService } from './city.service';
 
 // DTO's
-import { CityDto } from './dto/city-create.dto';
+import { CityCreateDto } from './dto/city-create.dto';
 import { CityQueryDto } from './dto/city-query.dto';
 
 // PIPES
@@ -36,15 +36,15 @@ export class CityController {
 	constructor(private readonly cityService: CityService) {}
 
 	@Post()
-	@ApiBody({ type: CityDto })
-	@ApiOkResponse({ type: CityDto })
+	@ApiBody({ type: CityCreateDto })
+	@ApiOkResponse({ type: CityCreateDto })
 	@ApiOperation({
 		description: 'Cria uma [Cidade] com o DTO recebido.',
 	})
-	public create(@Body() cityDto: CityDto) {
-		this.logger.log(`Create - payload: ${JSON.stringify(cityDto)}`);
+	public create(@Body() CityCreateDto: CityCreateDto) {
+		this.logger.log(`Create - payload: ${JSON.stringify(CityCreateDto)}`);
 
-		return this.cityService.create(cityDto).pipe(
+		return this.cityService.create(CityCreateDto).pipe(
 			tap((data) => {
 				this.logger.log(`Create Result: ${JSON.stringify(data)}`);
 			}),
@@ -60,7 +60,7 @@ export class CityController {
 		name: 'id',
 		description: 'Passar o _id da cidade.',
 	})
-	@ApiOkResponse({ type: CityDto })
+	@ApiOkResponse({ type: CityCreateDto })
 	@ApiOperation({
 		description: 'Busca uma [Cidade] de acordo com o _id enviado.',
 	})
@@ -79,8 +79,8 @@ export class CityController {
 	}
 
 	@Get()
-	@ApiQuery({ type: CityDto })
-	@ApiOkResponse({ type: [CityDto] })
+	@ApiQuery({ type: CityCreateDto })
+	@ApiOkResponse({ type: [CityCreateDto] })
 	@ApiOperation({
 		description: 'Busca uma [Cidade] de acordo com a query enviada.',
 	})

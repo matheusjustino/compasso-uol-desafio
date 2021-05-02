@@ -25,7 +25,7 @@ import { CityService } from '../city/city.service';
 import { ClientQueryDto } from './dtos/client-query.dto';
 import { ClientUpdateDto } from './dtos/client-update.dto';
 import { ClientCreateDto } from './dtos/client-create.dto';
-import { CityDto } from '../city/dto/city-create.dto';
+import { CityCreateDto } from '../city/dto/city-create.dto';
 import { Sex } from '../common/enums/sex.enum';
 
 describe('Client Controller', () => {
@@ -49,12 +49,12 @@ describe('Client Controller', () => {
 	});
 
 	beforeEach(async () => {
-		const cityDto: CityDto = {
+		const CityCreateDto: CityCreateDto = {
 			name: 'Campina Grande',
 			state: 'PB',
 		};
 
-		cityMock = await cityService.create(cityDto).toPromise();
+		cityMock = await cityService.create(CityCreateDto).toPromise();
 	});
 
 	afterAll(async () => {

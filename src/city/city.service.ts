@@ -9,7 +9,7 @@ import { CityDocument } from '../database/schemas/city.schema';
 import { CityRepository } from '../database/repositories/city.repository';
 
 // DTO's
-import { CityDto } from './dto/city-create.dto';
+import { CityCreateDto } from './dto/city-create.dto';
 import { CityQueryDto } from './dto/city-query.dto';
 import { Types } from 'mongoose';
 
@@ -17,7 +17,7 @@ import { Types } from 'mongoose';
 export class CityService {
 	constructor(private readonly cityRepository: CityRepository) {}
 
-	public create(city: CityDto): Observable<CityDocument> {
+	public create(city: CityCreateDto): Observable<CityDocument> {
 		return from(this.cityRepository.cityModel.create(city)).pipe(
 			map((city) => city),
 			catchError((error) => throwError(error)),
