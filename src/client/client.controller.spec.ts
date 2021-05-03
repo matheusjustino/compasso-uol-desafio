@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongooseModule } from '@nestjs/mongoose';
-import mongoose, { Types } from 'mongoose';
+import { Types } from 'mongoose';
 
 import { DatabaseModule } from '../database/database.module';
 import { ClientController } from './client.controller';

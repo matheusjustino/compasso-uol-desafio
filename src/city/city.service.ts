@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { from, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -11,7 +11,6 @@ import { CityRepository } from '../database/repositories/city.repository';
 // DTO's
 import { CityCreateDto } from './dto/city-create.dto';
 import { CityQueryDto } from './dto/city-query.dto';
-import { Types } from 'mongoose';
 
 @Injectable()
 export class CityService {
@@ -19,21 +18,24 @@ export class CityService {
 
 	public create(city: CityCreateDto): Observable<CityDocument> {
 		return from(this.cityRepository.cityModel.create(city)).pipe(
-			map((city) => city),
 			catchError((error) => throwError(error)),
 		);
 	}
 
-	public findById(id: string | Types.ObjectId): Observable<CityDocument> {
+	public findById(id: string): Observable<CityDocument> {
 		return from(this.cityRepository.cityModel.findById(id)).pipe(
-			map((city) => city),
+			map((city) => {
+				if (!city) {
+					throw new BadRequestException('City does not exist');
+				}
+				return city;
+			}),
 			catchError((error) => throwError(error)),
 		);
 	}
 
 	public findBy(query: CityQueryDto): Observable<CityDocument[]> {
-		return from(this.cityRepository.cityModel.find({ ...query })).pipe(
-			map((cities) => cities),
+		return from(this.cityRepository.cityModel.find(query)).pipe(
 			catchError((error) => throwError(error)),
 		);
 	}

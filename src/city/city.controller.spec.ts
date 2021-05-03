@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongooseModule } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
+import { Types, Error } from 'mongoose';
 
 import { CityController } from './city.controller';
 
@@ -63,7 +63,7 @@ describe('City Controller', () => {
 
 		await expect(
 			cityController.create(CityCreateDto).toPromise(),
-		).rejects.toThrow(mongoose.Error.ValidationError);
+		).rejects.toThrow(Error.ValidationError);
 	});
 
 	it('GET - should be returned a City by Id', async () => {
@@ -78,6 +78,21 @@ describe('City Controller', () => {
 		expect(findCity._id).toStrictEqual(city._id);
 		expect(findCity.name).toBe(city.name);
 		expect(findCity.state).toBe(city.state);
+	});
+
+	it('GET - shouldnt be returned a City by Id', async () => {
+		const CityCreateDto: CityCreateDto = {
+			name: 'Campina Grande',
+			state: 'PB',
+		};
+
+		const newCityId = new Types.ObjectId();
+
+		await cityController.create(CityCreateDto).toPromise();
+
+		await expect(
+			cityController.findById(newCityId.toString()).toPromise(),
+		).rejects.toThrow('City does not exist');
 	});
 
 	it('GET - should be returned a City array by query', async () => {

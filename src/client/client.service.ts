@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { from, Observable, throwError } from 'rxjs';
-import { catchError, map, mergeMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 // SERVICES
 import { CityService } from '../city/city.service';
@@ -25,14 +25,13 @@ export class ClientService {
 
 	public create(client: ClientCreateDto) {
 		return from(this.cityService.findById(client.city)).pipe(
-			map((result) => {
-				if (!result) {
+			switchMap((city) => {
+				if (!city) {
 					throw new BadRequestException('City does not exist');
 				}
 
 				return from(this.clientRepository.clientModel.create(client));
 			}),
-			mergeMap((data) => data),
 			catchError((error) => throwError(error)),
 		);
 	}
@@ -66,12 +65,12 @@ export class ClientService {
 		return from(
 			this.clientRepository.clientModel.findById(id).populate('city'),
 		).pipe(
-			map((result) => {
-				if (!result) {
+			map((client) => {
+				if (!client) {
 					throw new BadRequestException('Client does not exist');
 				}
 
-				return result;
+				return client;
 			}),
 			catchError((error) => throwError(error)),
 		);
@@ -87,12 +86,12 @@ export class ClientService {
 		return from(
 			this.clientRepository.clientModel.findByIdAndDelete(id),
 		).pipe(
-			map((result) => {
-				if (!result) {
+			map((client) => {
+				if (!client) {
 					throw new BadRequestException('Client does not exist');
 				}
 
-				return result;
+				return client;
 			}),
 			catchError((error) => throwError(error)),
 		);

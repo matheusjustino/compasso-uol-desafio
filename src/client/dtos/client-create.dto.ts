@@ -1,13 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import {
-	IsEnum,
-	IsMongoId,
-	IsNotEmpty,
-	IsNumber,
-	IsString,
-} from 'class-validator';
-import { Types } from 'mongoose';
+import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { Sex } from '../../common/enums/sex.enum';
 
 export class ClientCreateDto {
@@ -31,7 +23,6 @@ export class ClientCreateDto {
 	public birthDate: string;
 
 	@ApiProperty()
-	@IsMongoId()
-	@Type(() => Types.ObjectId)
-	public city: Types.ObjectId;
+	@IsString()
+	public city: string;
 }

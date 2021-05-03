@@ -1,8 +1,8 @@
-import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
+import { PipeTransform, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class MongoPipeTransform implements PipeTransform {
-	public transform(value: any, metadata: ArgumentMetadata) {
+	public transform(value: any) {
 		if (value) {
 			const query = Object.entries(value).reduce((acc, obj) => {
 				const key = obj[0];
