@@ -37,8 +37,7 @@
 
 ## Sobre o projeto
 
-Backend criado para integrar as plataformas criação e gerenciamento de cidades e
-clientes.
+API criada para criação e gerenciamento de Cidades e Clientes.
 
 ## Instruções
 
